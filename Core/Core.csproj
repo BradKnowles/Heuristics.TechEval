@@ -48,6 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\201711262227324_AddRequiredProperties.cs" />
+    <Compile Include="Migrations\201711262227324_AddRequiredProperties.Designer.cs">
+      <DependentUpon>201711262227324_AddRequiredProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Category.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="Models\Member.cs" />
@@ -65,6 +69,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201711142244515_Initial.resx">
       <DependentUpon>201711142244515_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711262227324_AddRequiredProperties.resx">
+      <DependentUpon>201711262227324_AddRequiredProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
