@@ -37,23 +37,28 @@ namespace Tests.Integration
         }
 
         [Test]
-        public void List_Having0Members_ShouldReturn0()
+        public void List_WhenDisplayingList_ShouldReturnCurrentMembers()
         {
             // Arrange
             var sut = new MembersController();
+            var db = new TestDataContext();
+            var currentMemberCount = db.Members.Count();
 
             // Act
             var result = sut.List() as ViewResult;
 
             // Assert
             var models = (List<Member>)result.ViewData.Model;
-            Assert.AreEqual(true, models.Count == 0);
+            Assert.AreEqual(true, models.Count == currentMemberCount);
         }
 
         [Test]
-        public void List_Having2Members_ShouldReturn2()
+        public void List_Adding2Members_ShouldReturnListWithNewMembersAdded()
         {
             // Arrange
+            var db = new TestDataContext();
+            var currentMemberCount = db.Members.Count();
+
             var sut = new MembersController();
             sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
             sut.New(new NewMember { Name = "Person 2", Email = "person2@example.com" });
@@ -63,7 +68,7 @@ namespace Tests.Integration
 
             // Assert
             var models = (List<Member>)result.ViewData.Model;
-            Assert.AreEqual(true, models.Count == 2);
+            Assert.AreEqual(true, models.Count == currentMemberCount + 2);
         }
 
         [Test]
