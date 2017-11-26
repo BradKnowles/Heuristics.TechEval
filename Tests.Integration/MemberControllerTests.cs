@@ -94,5 +94,19 @@ namespace Tests.Integration
             Assert.AreEqual(editedMember.Name, databaseMember.Name);
             Assert.AreEqual(editedMember.Email, databaseMember.Email);
         }
+
+        [Test]
+        public void EditMember_TryingToEditANonExistingMember_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            var editedMember = new EditMember { Id = -999, Name = "No one", Email = "noone@example.com" };
+
+            // Act
+            var sut = new MembersController();
+            var editResult = sut.Edit(editedMember);
+
+            // Assert
+            Assert.IsInstanceOf(typeof(EmptyResult), editResult);
+        }
     }
 }
