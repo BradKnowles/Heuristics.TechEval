@@ -33,5 +33,21 @@ namespace Heuristics.TechEval.Web.Controllers {
 
 			return Json(JsonConvert.SerializeObject(newMember));
 		}
+
+		[HttpPost]
+		public ActionResult Edit(EditMember data)
+		{
+			var member = _context.Members.FirstOrDefault(x => x.Id == data.Id);
+
+			if (member == null)
+				return new EmptyResult();
+
+			member.Name = data.Name;
+			member.Email = data.Email;
+
+			_context.SaveChanges();
+
+			return Json(JsonConvert.SerializeObject(data));
+		}
 	}
 }
