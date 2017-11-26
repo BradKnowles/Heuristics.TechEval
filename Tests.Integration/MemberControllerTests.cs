@@ -1,6 +1,7 @@
 ﻿using Heuristics.TechEval.Core.Models;
 using Heuristics.TechEval.Web.Controllers;
 using Heuristics.TechEval.Web.Models;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,30 @@ namespace Tests.Integration
             // Assert
             var models = (List<Member>)result.ViewData.Model;
             Assert.AreEqual(true, models.Count == 2);
+        }
+
+        [Test]
+        public void EditMember_MakesValidEdit_ShouldSucceed()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var jsonResult = (JsonResult)actionResult;
+            var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
+
+            var editedMember = new EditMember { Id = newMember.Id, Name = newMember.Name, Email = newMember.Email };
+            editedMember.Name = "EDITED Person 1";
+
+            // Act
+            sut.Edit(editedMember);
+
+            // Assert
+            var context = new TestDataContext();
+            var databaseMember = context.Members.First(x => x.Id == newMember.Id);
+
+            Assert.AreEqual(editedMember.Id, databaseMember.Id);
+            Assert.AreEqual(editedMember.Name, databaseMember.Name);
+            Assert.AreEqual(editedMember.Email, databaseMember.Email);
         }
     }
 }
