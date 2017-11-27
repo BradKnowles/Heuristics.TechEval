@@ -3,6 +3,7 @@ using Heuristics.TechEval.Web.Controllers;
 using Heuristics.TechEval.Web.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
@@ -68,6 +69,7 @@ namespace Tests.Integration
             // Assert
             Assert.Throws<DbEntityValidationException>(() => sut.New(newMember));
         }
+
         [Test]
         public void List_WhenDisplayingList_ShouldReturnCurrentMembers()
         {
@@ -139,6 +141,38 @@ namespace Tests.Integration
 
             // Assert
             Assert.IsInstanceOf(typeof(EmptyResult), editResult);
+        }
+
+        [Test]
+        public void EditMember_WhenEditingABlankUserName_ShouldThrowException()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var jsonResult = (JsonResult)actionResult;
+            var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
+
+            var editedMember = new EditMember { Id = newMember.Id, Name = newMember.Name, Email = newMember.Email };
+            editedMember.Name = String.Empty;
+
+            // Act & Assert
+            Assert.Throws<DbEntityValidationException>(() => sut.Edit(editedMember));
+        }
+
+        [Test]
+        public void EditMember_WhenEditingABlankEmail_ShouldThrowException()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var jsonResult = (JsonResult)actionResult;
+            var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
+
+            var editedMember = new EditMember { Id = newMember.Id, Name = newMember.Name, Email = newMember.Email };
+            editedMember.Email = String.Empty;
+
+            // Act & Assert
+            Assert.Throws<DbEntityValidationException>(() => sut.Edit(editedMember));
         }
     }
 }

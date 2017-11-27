@@ -46,8 +46,14 @@ namespace Heuristics.TechEval.Web.Controllers {
 		[HttpPost]
 		public ActionResult Edit(EditMember data)
 		{
-			var member = _context.Members.FirstOrDefault(x => x.Id == data.Id);
+			if (!ModelState.IsValid)
+			{
+				Response.StatusCode = (int)HttpStatusCode.BadRequest;
+				var modelErrors = ModelState.AllErrors();
+				return Json(modelErrors);
+			}
 
+			var member = _context.Members.FirstOrDefault(x => x.Id == data.Id);
 			if (member == null)
 				return new EmptyResult();
 
