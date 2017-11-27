@@ -4,6 +4,8 @@ using Heuristics.TechEval.Core;
 using Heuristics.TechEval.Web.Models;
 using Heuristics.TechEval.Core.Models;
 using Newtonsoft.Json;
+using System.Net;
+using Heuristics.TechEval.Web.Extensions;
 
 namespace Heuristics.TechEval.Web.Controllers {
 
@@ -23,6 +25,13 @@ namespace Heuristics.TechEval.Web.Controllers {
 
 		[HttpPost]
 		public ActionResult New(NewMember data) {
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var modelErrors = ModelState.AllErrors();
+                return Json(modelErrors);
+            }
+
 			var newMember = new Member {
 				Name = data.Name,
 				Email = data.Email
@@ -37,8 +46,14 @@ namespace Heuristics.TechEval.Web.Controllers {
 		[HttpPost]
 		public ActionResult Edit(EditMember data)
 		{
-			var member = _context.Members.FirstOrDefault(x => x.Id == data.Id);
+			if (!ModelState.IsValid)
+			{
+				Response.StatusCode = (int)HttpStatusCode.BadRequest;
+				var modelErrors = ModelState.AllErrors();
+				return Json(modelErrors);
+			}
 
+			var member = _context.Members.FirstOrDefault(x => x.Id == data.Id);
 			if (member == null)
 				return new EmptyResult();
 
