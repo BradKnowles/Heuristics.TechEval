@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
@@ -71,6 +72,25 @@ namespace Tests.Integration
         }
 
         [Test]
+        public void NewMember_WhenAddingDuplicateEmail_ShouldThrowException()
+        {
+
+            // Arrange
+            var sut = new MembersController();
+            var newMember = new NewMember
+            {
+                Name = "Person 6",
+                Email = "duplicate_email_test@example.net"
+            };
+
+            // Act
+            sut.New(newMember);
+
+            // Assert
+            Assert.Throws<DbUpdateException>(() => sut.New(newMember));
+        }
+
+        [Test]
         public void List_WhenDisplayingList_ShouldReturnCurrentMembers()
         {
             // Arrange
@@ -110,12 +130,12 @@ namespace Tests.Integration
         {
             // Arrange
             var sut = new MembersController();
-            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var actionResult = sut.New(new NewMember { Name = "Person 3", Email = "person3@example.com" });
             var jsonResult = (JsonResult)actionResult;
             var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
 
             var editedMember = new EditMember { Id = newMember.Id, Name = newMember.Name, Email = newMember.Email };
-            editedMember.Name = "EDITED Person 1";
+            editedMember.Name = "EDITED Person 3";
 
             // Act
             sut.Edit(editedMember);
@@ -148,7 +168,7 @@ namespace Tests.Integration
         {
             // Arrange
             var sut = new MembersController();
-            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var actionResult = sut.New(new NewMember { Name = "Person 4", Email = "person4@example.com" });
             var jsonResult = (JsonResult)actionResult;
             var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
 
@@ -164,7 +184,7 @@ namespace Tests.Integration
         {
             // Arrange
             var sut = new MembersController();
-            var actionResult = sut.New(new NewMember { Name = "Person 1", Email = "person1@example.com" });
+            var actionResult = sut.New(new NewMember { Name = "Person 5", Email = "person5@example.com" });
             var jsonResult = (JsonResult)actionResult;
             var newMember = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
 
@@ -173,6 +193,21 @@ namespace Tests.Integration
 
             // Act & Assert
             Assert.Throws<DbEntityValidationException>(() => sut.Edit(editedMember));
+        }
+
+        [Test]
+        public void EditMember_WhenEditingCausesDuplicateEmail_ShouldThrowException()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var actionResult = sut.New(new NewMember { Name = "Person 7", Email = "person7@example.com" });
+            var jsonResult = (JsonResult)actionResult;
+            var PERSON_7 = JsonConvert.DeserializeObject<Member>(jsonResult.Data.ToString());
+            sut.New(new NewMember { Name = "Person 8", Email = "person8@example.com" });
+
+            // Act & Assert
+            var edited_PERSON_7 = new EditMember { Id = PERSON_7.Id, Name = PERSON_7.Name, Email = "person8@example.com" };
+            Assert.Throws<DbUpdateException>(() => sut.Edit(edited_PERSON_7));
         }
     }
 }

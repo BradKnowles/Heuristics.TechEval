@@ -52,6 +52,10 @@
     <Compile Include="Migrations\201711262227324_AddRequiredProperties.Designer.cs">
       <DependentUpon>201711262227324_AddRequiredProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711270203414_AddIndexAndLengthEmail.cs" />
+    <Compile Include="Migrations\201711270203414_AddIndexAndLengthEmail.Designer.cs">
+      <DependentUpon>201711270203414_AddIndexAndLengthEmail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Category.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="Models\Member.cs" />
@@ -72,6 +76,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711262227324_AddRequiredProperties.resx">
       <DependentUpon>201711262227324_AddRequiredProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711270203414_AddIndexAndLengthEmail.resx">
+      <DependentUpon>201711270203414_AddIndexAndLengthEmail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

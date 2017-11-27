@@ -6,6 +6,8 @@ using Heuristics.TechEval.Core.Models;
 using Newtonsoft.Json;
 using System.Net;
 using Heuristics.TechEval.Web.Extensions;
+using System.Data.Entity.Core;
+using System;
 
 namespace Heuristics.TechEval.Web.Controllers {
 
@@ -37,8 +39,24 @@ namespace Heuristics.TechEval.Web.Controllers {
 				Email = data.Email
 			};
 
-			_context.Members.Add(newMember);
-			_context.SaveChanges();
+			try
+			{
+				_context.Members.Add(newMember);
+				_context.SaveChanges();
+			}
+			catch (UpdateException ex)
+			{
+				Exception currentException = ex;
+				while (currentException != null)
+				{
+					ModelState.AddModelError("EF", currentException.Message);
+					currentException = currentException.InnerException;
+				}
+				Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+				var modelErrors = ModelState.AllErrors();
+				return Json(modelErrors);
+			}
 
 			return Json(JsonConvert.SerializeObject(newMember));
 		}
@@ -60,7 +78,23 @@ namespace Heuristics.TechEval.Web.Controllers {
 			member.Name = data.Name;
 			member.Email = data.Email;
 
-			_context.SaveChanges();
+			try
+			{
+				_context.SaveChanges();
+			}
+			catch (UpdateException ex)
+			{
+				Exception currentException = ex;
+				while (currentException != null)
+				{
+					ModelState.AddModelError("EF", currentException.Message);
+					currentException = currentException.InnerException;
+				}
+				Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+				
+				var modelErrors = ModelState.AllErrors();
+				return Json(modelErrors);
+			}
 
 			return Json(JsonConvert.SerializeObject(data));
 		}
