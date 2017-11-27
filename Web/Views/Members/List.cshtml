@@ -40,6 +40,7 @@
 					</button>
 				</div>
 				<div class="modal-body">
+					<div style="display:none" class="alert alert-danger" role="alert" id="validationAlerts"></div>
 					<div class="form-group">
 						<label for="Name">Member Name</label>
 						<input type="text" class="form-control" id="Name" name="Name" placeholder="John Smith" />
@@ -91,9 +92,21 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		$("#NewMemberForm").ajaxForm({
+			beforeSubmit: function (arr, $form, options) {
+				var alertDiv = $("#validationAlerts");
+				alertDiv.hide();
+				alertDiv.empty();
+			},
 			success: function (formData, jqForm, options) {
 				// sure would be nice if we didn't have to reload the whole page...
 				document.location.reload();
+			},
+			error: function (xhr, statusText, httpStatusDescription, $form) {
+				var alertDiv = $("#validationAlerts");
+				for (key in xhr.responseJSON) {
+					alertDiv.append('<ul>' + xhr.responseJSON[key].Message + '</ul>')
+				}
+				alertDiv.show();
 			}
 		});
 
