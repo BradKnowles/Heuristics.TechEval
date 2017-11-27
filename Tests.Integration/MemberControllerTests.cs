@@ -4,6 +4,7 @@ using Heuristics.TechEval.Web.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -36,6 +37,37 @@ namespace Tests.Integration
             Assert.AreEqual(newMember.Email, lastAddedmember.Email);
         }
 
+        [Test]
+        public void NewMember_WhenAddingABlankUserName_ShouldThrowException()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var newMember = new NewMember
+            {
+                Email = "thedoctor@gallifrey.net"
+            };
+
+            // Act
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => sut.New(newMember));
+        }
+
+        [Test]
+        public void NewMember_WhenAddingABlankEmail_ShouldThrowException()
+        {
+            // Arrange
+            var sut = new MembersController();
+            var newMember = new NewMember
+            {
+                Name = "John Smith"
+            };
+
+            // Act
+
+            // Assert
+            Assert.Throws<DbEntityValidationException>(() => sut.New(newMember));
+        }
         [Test]
         public void List_WhenDisplayingList_ShouldReturnCurrentMembers()
         {
